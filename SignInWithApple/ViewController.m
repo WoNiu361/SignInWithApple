@@ -58,6 +58,10 @@
     //        [textField setValue:[UIColor orangeColor] forKey:@"_placeholderLabel.textColor"];
         }
         [self.view addSubview:textField];
+    
+    if (@available(iOS 13.0, *)) {//判断授权是否失效
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(monitorSignInWithAppleStateChanged:) name:ASAuthorizationAppleIDProviderCredentialRevokedNotification object:nil];
+    }
 }
 
 #pragma mark - 处理授权
@@ -91,6 +95,9 @@
         NSLog(@"fullName -     %@",credential.fullName);
         //授权成功后，你可以拿到苹果返回的全部数据，根据需要和后台交互。
         NSLog(@"user   -   %@  %@",user,identityToken);
+        //保存apple返回的唯一标识符
+        [[NSUserDefaults standardUserDefaults] setObject:user forKey:@"userIdentifier"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     } else if ([authorization.credential isKindOfClass:[ASPasswordCredential class]]) {
         // 用户登录使用现有的密码凭证
         ASPasswordCredential *psdCredential = authorization.credential;
@@ -201,5 +208,11 @@
     }
 }
 
+- (void)monitorSignInWithAppleStateChanged:(NSNotification *)notification {
+    NSLog(@"state CHANGE -  %@",notification);
+}
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ASAuthorizationAppleIDProviderCredentialRevokedNotification object:nil];
+}
 @end

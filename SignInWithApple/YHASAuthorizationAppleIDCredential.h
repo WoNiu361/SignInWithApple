@@ -11,10 +11,10 @@
 #import <AuthenticationServices/ASAuthorizationCredential.h>
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, YHASUserDetectionStatus) {
-    YHASUserDetectionStatusUnsupported,
-    YHASUserDetectionStatusUnknown,
-    YHASUserDetectionStatusLikelyReal,
+typedef NS_ENUM(NSInteger, YHASUserDetectionStatus) { // 用户检测状态
+    YHASUserDetectionStatusUnsupported, // 用户检测状态不受支持
+    YHASUserDetectionStatusUnknown,     // 用户检测状态未知
+    YHASUserDetectionStatusLikelyReal,  // 用户检测状态可能为真实
 };
 
 NS_ASSUME_NONNULL_BEGIN

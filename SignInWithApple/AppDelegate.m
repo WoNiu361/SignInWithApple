@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import <AuthenticationServices/AuthenticationServices.h>
 
 @interface AppDelegate ()
 
@@ -16,10 +17,50 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+//    [self monitorSignInWithAppleState];
+    
     return YES;
 }
-
+#pragma mark - 监听apple登录的状态
+- (void)monitorSignInWithAppleState {
+    if (@available(iOS 13.0,*)) {
+        NSString *user = [[NSUserDefaults standardUserDefaults] objectForKey:@"userIdentifier"];
+        NSLog(@"user11 -     %@",user);
+        ASAuthorizationAppleIDProvider *provider = [[ASAuthorizationAppleIDProvider alloc] init];
+        __block NSString *errorMsg;
+        [provider getCredentialStateForUserID:user completion:^(ASAuthorizationAppleIDProviderCredentialState credentialState, NSError * _Nullable error) {
+            if (!error) {
+                switch (credentialState) {
+                    case ASAuthorizationAppleIDProviderCredentialRevoked:
+                        NSLog(@"Revoked");
+                        errorMsg = @"苹果授权凭证失效";
+                        break;
+                        
+                    case ASAuthorizationAppleIDProviderCredentialAuthorized:
+                        NSLog(@"Authorized");
+                        errorMsg = @"苹果授权凭证状态良好";
+                        break;
+                        
+                    case ASAuthorizationAppleIDProviderCredentialNotFound:
+                        NSLog(@"NotFound");
+                        errorMsg = @"未发现苹果授权凭证";
+                        break;
+                        
+                    case ASAuthorizationAppleIDProviderCredentialTransferred:
+                        NSLog(@"CredentialTransferred");
+                        errorMsg = @"未发现苹果授权凭证";
+                        break;
+                        
+                    default:
+                        break;
+                }
+            } else {
+                NSLog(@"state is failure");
+            }
+        }];
+    }
+}
 
 #pragma mark - UISceneSession lifecycle
 

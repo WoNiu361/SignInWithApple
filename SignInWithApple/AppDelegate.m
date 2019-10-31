@@ -2,7 +2,7 @@
 //  AppDelegate.m
 //  SignInWithApple
 //
-//  Created by 吕颜辉 on 2019/10/30.
+//  Created by LYH on 2019/10/30.
 //  Copyright © 2019 LYH. All rights reserved.
 //
 

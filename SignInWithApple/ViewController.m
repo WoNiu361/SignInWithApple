@@ -2,7 +2,7 @@
 //  ViewController.m
 //  SignInWithApple
 //
-//  Created by 吕颜辉 on 2019/10/30.
+//  Created by LYH on 2019/10/30.
 //  Copyright © 2019 LYH. All rights reserved.
 //
 
@@ -73,6 +73,11 @@
         ASAuthorizationAppleIDRequest *request = appleIdProvider.createRequest;
          // 在用户授权期间请求的联系信息
         request.requestedScopes = @[ASAuthorizationScopeEmail,ASAuthorizationScopeFullName];
+        
+         //需要考虑用户已经登录过，可以直接使用keychain密码来进行登录-这个很智能 (但是这个有问题)
+//        ASAuthorizationPasswordProvider *appleIDPasswordProvider = [[ASAuthorizationPasswordProvider alloc] init];
+//        ASAuthorizationPasswordRequest *passwordRequest = appleIDPasswordProvider.createRequest;
+        
         // 由ASAuthorizationAppleIDProvider创建的授权请求 管理授权请求的控制器
         ASAuthorizationController *controller = [[ASAuthorizationController alloc] initWithAuthorizationRequests:@[request]];
          // 设置授权控制器通知授权请求的成功与失败的代理
@@ -143,47 +148,6 @@
                         
         default:
             break;
-    }
-}
-
-//! 如果存在iCloud Keychain 凭证或者AppleID 凭证提示用户
-- (void)perfomExistingAccountSetupFlows {
-    if (@available(iOS 13.0, *)) {
-        // A mechanism for generating requests to authenticate users based on their Apple ID.
-        // 基于用户的Apple ID授权用户，生成用户授权请求的一种机制
-        ASAuthorizationAppleIDProvider *appleIDProvider = [ASAuthorizationAppleIDProvider new];
-        // An OpenID authorization request that relies on the user’s Apple ID.
-        // 授权请求依赖于用于的AppleID
-        ASAuthorizationAppleIDRequest *authAppleIDRequest = [appleIDProvider createRequest];
-        // A mechanism for generating requests to perform keychain credential sharing.
-        // 为了执行钥匙串凭证分享生成请求的一种机制
-        ASAuthorizationPasswordRequest *passwordRequest = [[ASAuthorizationPasswordProvider new] createRequest];
-        
-        NSMutableArray <ASAuthorizationRequest *>* mArr = [NSMutableArray arrayWithCapacity:2];
-        if (authAppleIDRequest) {
-            [mArr addObject:authAppleIDRequest];
-        }
-        if (passwordRequest) {
-            [mArr addObject:passwordRequest];
-        }
-        // ASAuthorizationRequest：A base class for different kinds of authorization requests.
-        // ASAuthorizationRequest：对于不同种类授权请求的基类
-        NSArray <ASAuthorizationRequest *>* requests = [mArr copy];
-        
-        // A controller that manages authorization requests created by a provider.
-        // 由ASAuthorizationAppleIDProvider创建的授权请求 管理授权请求的控制器
-        // Creates a controller from a collection of authorization requests.
-        // 从一系列授权请求中创建授权控制器
-        ASAuthorizationController *authorizationController = [[ASAuthorizationController alloc] initWithAuthorizationRequests:requests];
-        // A delegate that the authorization controller informs about the success or failure of an authorization attempt.
-        // 设置授权控制器通知授权请求的成功与失败的代理
-        authorizationController.delegate = self;
-        // A delegate that provides a display context in which the system can present an authorization interface to the user.
-        // 设置提供 展示上下文的代理，在这个上下文中 系统可以展示授权界面给用户
-        authorizationController.presentationContextProvider = self;
-        // starts the authorization flows named during controller initialization.
-        // 在控制器初始化期间启动授权流
-        [authorizationController performRequests];
     }
 }
 
